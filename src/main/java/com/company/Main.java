@@ -10,26 +10,29 @@ public class Main {
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
 
     public static void main(String[] args) {
-	// write your code here
+	// Scanner for user input
     Scanner scanner = new Scanner(System.in);
     System.out.print("Sup gamer. Are you interested in a specific PC part or a full build? ");
     System.out.println("Please answer by writing 'Full Build','GPU','CPU','Motherboard','PSU','Case','Cooler', or 'Ram'. ");
+    // Save answer for first question
     String want = scanner.nextLine();
     System.out.println("That's pretty sway gamer. What is your budget?(please include currency type) ");
+    // Save answer for second question
     String budget = scanner.nextLine();
-
+    // Insert answer and budget strings to helper function to be combined into one string
     String question = formatQuestion(want, budget);
-
+    // Send question to ChatGPT API and save as a string
     String response = getChatGPTResponse(question);
+    // Print out ChatGPT answer to the user
     System.out.println(response);
     }
-
+    // Helper function to create a question based on the user's responses
     private static String formatQuestion(String want, String budget) {
         String question = "I am a PC gamer and I'm looking to buy a new " + want + ". My budget is " + budget +
                 ". What would you recommend that I buy?";
         return question;
     }
-
+    // Function to send a question to ChatGPT API
     public static String getChatGPTResponse(String input) {
         OkHttpClient client = new OkHttpClient();
         JSONObject json = new JSONObject();
@@ -52,6 +55,9 @@ public class Main {
             return responseObject.getJSONArray("choices").getJSONObject(0).getJSONObject("message").getString("content");
         } catch (Exception e) {
             e.printStackTrace();
+            if (e instanceof IOException) {
+                System.out.println("API Response Error: " + e.getMessage());
+            }
             return "Error getting response.";
         }
     }
